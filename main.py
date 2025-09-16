@@ -35,13 +35,37 @@ def email_valido(email):
     return re.match(padrao, email) is not None
 
 class Cadastro(Screen):
-    nome = ObjectProperty(None)
-    email = ObjectProperty(None)
-    senha = ObjectProperty(None)
-    senha_confirma = ObjectProperty(None)
-    mensagem_label = ObjectProperty(None)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
+        
+        layout.add_widget(Label(text='Cadastro', size_hint_y=0.2, font_size=24))
+        
+        self.nome = TextInput(hint_text='Nome', multiline=False, size_hint_y=0.1)
+        self.email = TextInput(hint_text='Email', multiline=False, size_hint_y=0.1)
+        self.senha = TextInput(hint_text='Senha', password=True, multiline=False, size_hint_y=0.1)
+        self.senha_confirma = TextInput(hint_text='Confirmar Senha', password=True, multiline=False, size_hint_y=0.1)
+        
+        layout.add_widget(self.nome)
+        layout.add_widget(self.email)
+        layout.add_widget(self.senha)
+        layout.add_widget(self.senha_confirma)
+        
+        btn_cadastrar = Button(text='Cadastrar', size_hint_y=0.1)
+        btn_cadastrar.bind(on_press=self.cadastrar)
+        
+        btn_voltar = Button(text='Voltar para Login', size_hint_y=0.1)
+        btn_voltar.bind(on_press=self.voltar_login)
+        
+        layout.add_widget(btn_cadastrar)
+        layout.add_widget(btn_voltar)
+        
+        self.mensagem_label = Label(text='', size_hint_y=0.1, color=(1, 0, 0, 1))
+        layout.add_widget(self.mensagem_label)
+        
+        self.add_widget(layout)
 
-    def cadastrar(self):
+    def cadastrar(self, instance):
         app = App.get_running_app()
         app.adicionar_usuario(
             self.nome.text,
@@ -50,7 +74,7 @@ class Cadastro(Screen):
             self.senha_confirma.text
         )
     
-    def voltar_login(self):
+    def voltar_login(self, instance):
         self.manager.current = 'login'
         self.limpar_campos()
     
@@ -62,9 +86,6 @@ class Cadastro(Screen):
         self.mensagem_label.text = ''
 
 class Listagem(Screen):
-    busca_input = ObjectProperty(None)
-    mensagem_label = ObjectProperty(None)
-    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
@@ -165,11 +186,6 @@ class Listagem(Screen):
         self.manager.current = 'boasvindas'
 
 class Edicao(Screen):
-    nome_input = ObjectProperty(None)
-    email_input = ObjectProperty(None)
-    senha_input = ObjectProperty(None)
-    mensagem_label = ObjectProperty(None)
-    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
@@ -222,10 +238,6 @@ class Edicao(Screen):
         self.id_usuario = ""
 
 class Login(Screen):
-    email_input = ObjectProperty(None)
-    senha_input = ObjectProperty(None)
-    mensagem_label = ObjectProperty(None)
-    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
@@ -274,8 +286,6 @@ class Login(Screen):
         self.mensagem_label.text = ''
 
 class BoasVindas(Screen):
-    label_boas_vindas = ObjectProperty(None)
-    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', padding=20, spacing=10)
