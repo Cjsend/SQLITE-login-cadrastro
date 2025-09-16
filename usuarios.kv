@@ -1,201 +1,193 @@
-#:kivy 1.11.1
+#:kivy 2.3.0
 
-<GerenciadorTelas>:
-    Cadastro:
-        name: "cadastro"
-    Listagem:
-        name: "listagem"
-    Edicao:
-        name: "edicao"
+GerenciadorTelas:
     Login:
-        name: "login"
+    Cadastro:
+    Listagem:
+    Edicao:
     BoasVindas:
-        name: "boasvindas"
 
-<Cadastro>:
+<Login>:
+    name: "login"
+    email_input: email
+    senha_input: senha
+    mensagem_label: mensagem
+
     BoxLayout:
         orientation: "vertical"
         padding: 20
         spacing: 10
-        canvas.before:
-            Color:
-                rgba: 0.9, 0.95, 1, 1  # azul claro
-            Rectangle:
-                pos: self.pos
-                size: self.size
+
         Label:
-            text: "Cadastro de Usuário"
-            color: 0.1, 0.3, 0.6, 1
-            font_size: 28
-        TextInput:
-            id: nome
-            hint_text: "Nome"
-            multiline: False
+            text: "Login"
+            font_size: 24
+            size_hint_y: 0.2
+
         TextInput:
             id: email
             hint_text: "Email"
             multiline: False
+
         TextInput:
             id: senha
             hint_text: "Senha"
             password: True
             multiline: False
+
+        Button:
+            text: "Entrar"
+            on_release: root.login()
+
+        Button:
+            text: "Cadastrar"
+            on_release: root.ir_para_cadastro()
+
+        Button:
+            text: "Resetar Senha"
+            on_release: app.resetar_senha(email.text, senha.text)
+
+        Label:
+            id: mensagem
+            text: ""
+            color: 1,0,0,1
+
+<Cadastro>:
+    name: "cadastro"
+    nome: nome
+    email: email
+    senha: senha
+    senha_confirma: senha_confirma
+    mensagem_label: mensagem
+
+    BoxLayout:
+        orientation: "vertical"
+        TextInput:
+            id: nome
+            hint_text: "Nome"
+        TextInput:
+            id: email
+            hint_text: "Email"
+        TextInput:
+            id: senha
+            hint_text: "Senha"
+            password: True
         TextInput:
             id: senha_confirma
             hint_text: "Confirmar Senha"
             password: True
-            multiline: False
         Button:
             text: "Cadastrar"
-            on_release: app.adicionar_usuario(nome.text, email.text, senha.text, senha_confirma.text)
+            on_release: root.cadastrar()
         Label:
-            text: root.mensagem
-            color: 1, 0, 0, 1
-        Button:
-            text: "Ir para Login"
-            background_color: 0.8, 0.2, 0.2, 1
-            color: 1, 1, 1, 1
-            on_release: app.root.current = "login"
+            id: mensagem
+            text: ""
 
 <Listagem>:
+    name: "listagem"
+    lista: lista
+    busca_input: busca
+    mensagem_label: mensagem
+
     BoxLayout:
         orientation: "vertical"
-        padding: 20
+        padding: 10
         spacing: 10
-        canvas.before:
-            Color:
-                rgba: 0.95, 0.98, 0.9, 1  # verde claro
-            Rectangle:
-                pos: self.pos
-                size: self.size
-        Label:
-            text: "Usuários Cadastrados"
-            color: 0.2, 0.5, 0.2, 1
-            font_size: 28
-        ScrollView:
-            GridLayout:
-                id: lista
-                cols: 1
-                size_hint_y: None
-                height: self.minimum_height
+
+        BoxLayout:
+            size_hint_y: 0.1
+            TextInput:
+                id: busca
+                hint_text: "Buscar usuário..."
+                multiline: False
+            Button:
+                text: "Buscar"
+                on_release: root.buscar()
+            Button:
+                text: "Ordenar por Nome"
+                on_release: app.listar_usuarios("nome")
+            Button:
+                text: "Ordenar por Email"
+                on_release: app.listar_usuarios("email")
+
+        GridLayout:
+            id: lista
+            cols: 3
+            size_hint_y: 0.8
+
         Button:
             text: "Voltar"
-            background_color: 0.2, 0.6, 1, 1
-            color: 1, 1, 1, 1
-            on_release: app.root.current = "cadastro"
+            size_hint_y: 0.1
+            on_release: app.root.current = "boasvindas"
+
+        Label:
+            id: mensagem
+            text: ""
+            color: 1,0,0,1
 
 <Edicao>:
+    name: "edicao"
+    nome_input: nome
+    email_input: email
+    senha_input: senha
+    mensagem_label: mensagem
+
     BoxLayout:
         orientation: "vertical"
         padding: 20
         spacing: 10
-        canvas.before:
-            Color:
-                rgba: 1, 0.95, 0.9, 1  # laranja claro
-            Rectangle:
-                pos: self.pos
-                size: self.size
+
         Label:
             text: "Editar Usuário"
-            color: 1, 0.5, 0.2, 1
-            font_size: 28
+            font_size: 24
+            size_hint_y: 0.2
+
         TextInput:
             id: nome
             hint_text: "Nome"
             multiline: False
-            foreground_color: 0, 0, 0, 1
-            background_color: 1, 1, 1, 1
-            on_text: root.nome = self
+
         TextInput:
             id: email
             hint_text: "Email"
             multiline: False
-            foreground_color: 0, 0.5, 0.5, 1
-            background_color: 1, 1, 1, 1
-            on_text: root.email = self
+
         TextInput:
             id: senha
-            hint_text: "Senha"
+            hint_text: "Nova Senha (opcional)"
             password: True
             multiline: False
-            foreground_color: 1, 0, 0, 1
-            background_color: 1, 1, 1, 1
-            on_text: root.senha = self
-        Button:
-            text: "Salvar Alterações"
-            background_color: 0.2, 0.6, 1, 1
-            color: 1, 1, 1, 1
-            on_release: app.editar_usuario(root.id_usuario, nome.text, email.text, senha.text)
-        Label:
-            text: root.mensagem
-            color: 1, 0, 0, 1
-        Button:
-            text: "Cancelar"
-            background_color: 0.8, 0.2, 0.2, 1
-            color: 1, 1, 1, 1
-            on_release: app.root.current = "listagem"
 
-<Login>:
-    BoxLayout:
-        orientation: "vertical"
-        padding: 20
-        spacing: 10
-        canvas.before:
-            Color:
-                rgba: 0.95, 0.9, 1, 1  # lilás claro
-            Rectangle:
-                pos: self.pos
-                size: self.size
-        Label:
-            text: "Login"
-            color: 0.5, 0.2, 0.6, 1
-            font_size: 28
-        TextInput:
-            id: email_login
-            hint_text: "Email"
-            multiline: False
-            foreground_color: 0.8, 1, 0, 1
-            background_color: 1, 1, 1, 1
-            on_text: root.email = self
-        TextInput:
-            id: senha_login
-            hint_text: "Senha"
-            password: True
-            multiline: False
-            foreground_color: 0.8, 0.5, 0.2, 1
-            background_color: 1, 1, 1, 1
-            on_text: root.senha = self
         Button:
-            text: "Entrar"
-            background_color: 0.2, 0.6, 1, 1
-            color: 1, 1, 1, 1
-            on_release: app.validar_login(email_login.text, senha_login.text)
-        Label:
-            text: root.mensagem
-            color: 1, 0, 0, 1
+            text: "Salvar"
+            on_release: root.salvar()
+
         Button:
             text: "Voltar"
-            background_color: 0.8, 0.2, 0.2, 1
-            color: 1, 1, 1, 1
-            on_release: app.root.current = "cadastro"
+            on_release: app.root.current = "listagem"
+
+        Label:
+            id: mensagem
+            text: ""
+            color: 1,0,0,1
 
 <BoasVindas>:
+    name: "boasvindas"
+    label_boas_vindas: boas
+
     BoxLayout:
         orientation: "vertical"
         padding: 20
         spacing: 10
-        canvas.before:
-            Color:
-                rgba: 0.9, 1, 0.95, 1  # azul esverdeado claro
-            Rectangle:
-                pos: self.pos
-                size: self.size
+
         Label:
-            text: "Bem-vindo, " + (root.nome if root.nome else "Usuário")
-            color: 0.1, 0.5, 0.4, 1
-            font_size: 28
+            id: boas
+            text: "Bem-vindo!"
+            font_size: 24
+
+        Button:
+            text: "Listar Usuários"
+            on_release: app.root.current = "listagem"
+
         Button:
             text: "Sair"
-            background_color: 0.8, 0.2, 0.2, 1
-            color: 1, 1, 1, 1
             on_release: app.root.current = "login"
